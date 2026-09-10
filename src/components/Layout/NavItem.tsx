@@ -1,33 +1,29 @@
 import { NavLink } from "react-router";
 
-const NavItem = ({
-  label,
-  icon,
-  route,
-  onClick,
-}: {
+export interface NavItemProps {
   label: string;
   route: string;
-  icon: any;
   onClick?: () => void;
-}) => {
+}
+
+const NavItem = ({ label, route, onClick }: NavItemProps) => {
   return (
-    <li className={[
-      "w-full p-4 rounded-2xl",
-      "bg-neutral-900/40 backdrop-blur-md md:backdrop-blur-xl",
-      "border border-white/5 shadow-2xl",
-    ]
-      .filter(Boolean)
-      .join(" ")}>
-      <NavLink
-        to={route}
-        className={"flex justify-center text-neutral-50"}
-        onClick={onClick}
-        aria-label={label}
-      >
-        {icon}
-      </NavLink>
-    </li>
+    <NavLink
+      to={route}
+      onClick={onClick}
+      className={({ isActive }) =>
+        [
+          "flex items-center justify-center py-2 px-2 sm:px-3 rounded-xl text-xs font-medium transition-all duration-150 select-none text-center",
+          isActive
+            ? "bg-white/10 text-white shadow-sm border border-white/10"
+            : "text-neutral-400 hover:text-white hover:bg-white/[0.04] border border-transparent",
+        ]
+          .filter(Boolean)
+          .join(" ")
+      }
+    >
+      {label}
+    </NavLink>
   );
 };
 

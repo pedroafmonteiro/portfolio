@@ -7,7 +7,6 @@ import {
     type ReactNode,
 } from "react";
 import NavItem from "./NavItem";
-import { Briefcase, FolderOpenDot, House, Mail } from "lucide-react";
 
 export interface MainContentProps extends HTMLAttributes<HTMLElement> {
     children?: ReactNode;
@@ -16,10 +15,10 @@ export interface MainContentProps extends HTMLAttributes<HTMLElement> {
 }
 
 const navItems = [
-    { label: "Home", icon: <House />, route: "/" },
-    { label: "Experience", icon: <Briefcase />, route: "/experience" },
-    { label: "Projects", icon: <FolderOpenDot />, route: "/projects" },
-    { label: "Contact", icon: <Mail />, route: "/contact" },
+    { label: "Home", route: "/" },
+    { label: "Experience", route: "/experience" },
+    { label: "Projects", route: "/projects" },
+    { label: "Contact", route: "/contact" },
 ];
 
 const MainContent = ({
@@ -43,7 +42,7 @@ const MainContent = ({
             return;
         }
 
-        const threshold = 40;
+        const threshold = 50;
         const top = Math.min(Math.max(scrollTop / threshold, 0), 1);
         const remaining = maxScroll - scrollTop;
         const bottom = Math.min(Math.max(remaining / threshold, 0), 1);
@@ -100,29 +99,28 @@ const MainContent = ({
 
                     <div
                         aria-hidden="true"
-                        className="pointer-events-none absolute top-[1px] inset-x-[1px] h-12 rounded-t-[15px] backdrop-blur-md [mask-image:linear-gradient(to_bottom,black_20%,transparent)] [-webkit-mask-image:linear-gradient(to_bottom,black_20%,transparent)] transition-opacity duration-300 ease-out z-10"
+                        className="pointer-events-none absolute top-[1px] inset-x-[1px] h-20 rounded-t-[15px] bg-gradient-to-b from-neutral-950/45 via-neutral-950/15 to-transparent backdrop-blur-md [mask-image:linear-gradient(to_bottom,black,transparent)] [-webkit-mask-image:linear-gradient(to_bottom,black,transparent)] transition-opacity duration-300 ease-out z-10"
                         style={{ opacity: scrollProgress.top }}
                     />
 
                     <div
                         aria-hidden="true"
-                        className="pointer-events-none absolute bottom-[1px] inset-x-[1px] h-12 rounded-b-[15px] backdrop-blur-md [mask-image:linear-gradient(to_top,black_20%,transparent)] [-webkit-mask-image:linear-gradient(to_top,black_20%,transparent)] transition-opacity duration-300 ease-out z-10"
+                        className="pointer-events-none absolute bottom-[1px] inset-x-[1px] h-20 rounded-b-[15px] bg-gradient-to-t from-neutral-950/45 via-neutral-950/15 to-transparent backdrop-blur-md [mask-image:linear-gradient(to_top,black,transparent)] [-webkit-mask-image:linear-gradient(to_top,black,transparent)] transition-opacity duration-300 ease-out z-10"
                         style={{ opacity: scrollProgress.bottom }}
                     />
                 </div>
 
-                <nav className="shrink-0 flex items-center justify-center w-full max-w-md self-center mx-auto">
-                    <ul className="flex flex-row w-full justify-between space-x-2">
+                <nav className="shrink-0 w-full p-1.5 rounded-2xl bg-neutral-900/40 backdrop-blur-md md:backdrop-blur-xl border border-white/5 shadow-2xl">
+                    <div className="grid grid-cols-4 gap-1">
                         {navItems.map((item) => (
                             <NavItem
                                 key={item.label}
                                 label={item.label}
-                                icon={item.icon}
                                 route={item.route}
                                 onClick={() => { }}
                             />
                         ))}
-                    </ul>
+                    </div>
                 </nav>
             </div>
         </div>
