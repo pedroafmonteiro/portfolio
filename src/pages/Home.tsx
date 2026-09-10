@@ -17,7 +17,7 @@ const Home = () => {
   return (
     <div className="space-y-8 w-full max-w-xl mx-auto py-2">
       <header className="space-y-3">
-        <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2">
+        <div className="flex flex-row items-center justify-between gap-2">
           <div>
             <h1 className="text-xl font-medium text-neutral-100">
               Pedro Monteiro
@@ -29,7 +29,7 @@ const Home = () => {
             href="/Pedro_Monteiro_Resume.pdf"
             target="_blank"
             rel="noopener noreferrer"
-            className="group inline-flex items-center text-xs font-mono text-neutral-400 hover:text-white transition-colors self-start sm:self-auto"
+            className="group inline-flex items-center text-xs font-mono text-neutral-400 hover:text-white transition-colors self-auto"
           >
             <span>View Resume</span>
             <span className="inline-block ml-1 text-neutral-400 group-hover:text-white transition-transform duration-150 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 select-none">

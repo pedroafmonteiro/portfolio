@@ -128,7 +128,7 @@ const MainContent = ({
                     />
                 </div>
 
-                <nav className="shrink-0 w-full p-1.5 rounded-2xl bg-neutral-900/40 backdrop-blur-md md:backdrop-blur-xl border border-white/5 shadow-2xl">
+                <nav className="shrink-0 w-full max-w-md mx-auto p-1.5 rounded-2xl bg-neutral-900/40 backdrop-blur-md md:backdrop-blur-xl border border-white/5 shadow-2xl">
                     <div className="grid grid-cols-4 gap-1">
                         {navItems.map((item) => (
                             <NavItem
