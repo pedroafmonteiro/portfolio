@@ -32,7 +32,7 @@ const MainContent = ({
             >
                 <main
                     className={[
-                        "flex-1 min-h-0 overflow-y-auto",
+                        "flex-1 min-h-0 overflow-y-auto no-scrollbar",
                         "p-4 rounded-2xl",
                         "flex flex-col",
                         "bg-neutral-900/40 backdrop-blur-md md:backdrop-blur-xl",
