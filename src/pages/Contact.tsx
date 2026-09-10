@@ -1,24 +1,48 @@
-import { useEffect, useState } from "react";
-import { useLocation } from "react-router";
+import { useState, type FormEvent, type SVGProps } from "react";
+import { Mail } from "lucide-react";
 import TextInput from "../components/Inputs/TextInput";
 import TextArea from "../components/Inputs/TextArea";
 import Button from "../components/Inputs/Button";
 
-const Contact = () => {
-  const [entered, setEntered] = useState(false);
-  const location = useLocation();
+const GithubIcon = ({ className = "w-4 h-4", ...props }: SVGProps<SVGSVGElement>) => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+    {...props}
+  >
+    <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" />
+    <path d="M9 18c-4.51 2-5-2-7-2" />
+  </svg>
+);
 
+const LinkedinIcon = ({ className = "w-4 h-4", ...props }: SVGProps<SVGSVGElement>) => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+    {...props}
+  >
+    <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
+    <rect width="4" height="12" x="2" y="9" />
+    <circle cx="4" cy="4" r="2" />
+  </svg>
+);
+
+const Contact = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [isError, setIsError] = useState(false);
 
-  useEffect(() => {
-    setEntered(false);
-    const timeout = setTimeout(() => setEntered(true), 10);
-    return () => clearTimeout(timeout);
-  }, [location.pathname]);
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
     const form = e.target as HTMLFormElement;
@@ -63,64 +87,117 @@ const Contact = () => {
     }
   };
 
+  const socials = [
+    {
+      label: "Email",
+      value: "me@pedroafmonteiro.com",
+      href: "mailto:me@pedroafmonteiro.com",
+      icon: Mail,
+    },
+    {
+      label: "GitHub",
+      value: "github.com/pedroafmonteiro",
+      href: "https://github.com/pedroafmonteiro",
+      icon: GithubIcon,
+    },
+    {
+      label: "LinkedIn",
+      value: "linkedin.com/in/pedro10monteiro",
+      href: "https://www.linkedin.com/in/pedro10monteiro/",
+      icon: LinkedinIcon,
+    },
+  ];
+
   return (
-    <>
-      <main
-        className={[
-          "flex flex-col gap-4 items-center justify-center min-h-screen w-full transition-all duration-400 md:pt-24",
-          entered
-            ? "opacity-100 scale-100 pointer-events-auto"
-            : "opacity-0 scale-95 translate-y-5 pointer-events-none",
-        ].join(" ")}
-      >
-        <div className="p-4 md:w-3xl space-y-4">
-          <header className="flex flex-col gap-2">
-            <h1 className="text-neutral-200 text-4xl">Contact me</h1>
-            <p className="text-neutral-400 text-base">
-              If you have any questions, want to collaborate, or just say hi,
-              feel free to reach out!
-            </p>
-          </header>
-          <form onSubmit={handleSubmit}>
-            <input type="hidden" name="_captcha" value="false" />
-            <TextInput
-              type="text"
-              label="Name"
-              id="name"
-              name="name"
-              required
+    <div className="space-y-8 w-full max-w-xl mx-auto py-2">
+        <header className="space-y-1">
+          <h1 className="text-xl font-medium text-neutral-100">Contact</h1>
+          <p className="text-sm text-neutral-400">
+            If you have any questions, want to collaborate, or just say hi,
+            feel free to reach out!
+          </p>
+        </header>
+
+        <form onSubmit={handleSubmit} className="space-y-3">
+          <input type="hidden" name="_captcha" value="false" />
+          <TextInput
+            type="text"
+            label="Name"
+            id="name"
+            name="name"
+            placeholder="Your name"
+            required
+          />
+          <TextInput
+            type="email"
+            label="Email"
+            id="email"
+            name="email"
+            placeholder="you@example.com"
+            required
+          />
+          <TextInput
+            type="text"
+            label="Subject"
+            id="subject"
+            name="subject"
+            placeholder="What's this about?"
+            required
+          />
+          <TextArea
+            label="Message"
+            id="message"
+            name="message"
+            placeholder="Write your message here..."
+            required
+          />
+          <div className="pt-1">
+            <Button
+              type="submit"
+              baseText="Send message"
+              loadingText="Sending..."
+              successText="Message sent"
+              errorText="Couldn't send — try again"
+              isLoading={isLoading}
+              isSuccess={isSuccess}
+              isError={isError}
             />
-            <TextInput
-              type="email"
-              label="Email"
-              id="email"
-              name="email"
-              required
-            />
-            <TextInput
-              type="text"
-              label="Subject"
-              id="subject"
-              name="subject"
-              required
-            />
-            <TextArea label="Message" id="message" name="message" required />
-            <div className="mt-2">
-              <Button
-                type="submit"
-                baseText="Send"
-                loadingText="Sending..."
-                successText="Sent!"
-                errorText="Error!"
-                isLoading={isLoading}
-                isSuccess={isSuccess}
-                isError={isError}
-              />
-            </div>
-          </form>
-        </div>
-      </main>
-    </>
+          </div>
+        </form>
+
+        <section className="pt-6 border-t border-white/5 space-y-4">
+          <h2 className="text-sm font-medium text-neutral-300">
+            Direct & Socials
+          </h2>
+
+          <div className="divide-y divide-white/5">
+            {socials.map((social) => {
+              const Icon = social.icon;
+              return (
+                <a
+                  key={social.label}
+                  href={social.href}
+                  target={social.href.startsWith("mailto:") ? undefined : "_blank"}
+                  rel={social.href.startsWith("mailto:") ? undefined : "noopener noreferrer"}
+                  className="group flex items-center justify-between py-3 first:pt-0 transition-colors"
+                  aria-label={`${social.label}: ${social.value}`}
+                >
+                  <div className="flex items-center text-neutral-400 group-hover:text-white transition-colors">
+                    <Icon className="w-4 h-4" />
+                    <span className="sr-only">{social.label}</span>
+                  </div>
+                  <span className="font-mono text-sm text-neutral-200 group-hover:text-white transition-colors">
+                    {social.value}
+                    <span className="inline-block ml-1.5 text-neutral-400 group-hover:text-white transition-transform duration-150 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 select-none">
+                      ↗
+                    </span>
+                  </span>
+                </a>
+              );
+            })}
+          </div>
+        </section>
+      </div>
   );
 };
 

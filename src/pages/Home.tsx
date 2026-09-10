@@ -1,50 +1,117 @@
-import { useEffect, useState } from "react";
-import { useLocation } from "react-router";
-
 const Home = () => {
-  const [entered, setEntered] = useState(false);
-  const location = useLocation();
-
-  useEffect(() => {
-    setEntered(false);
-    const timeout = setTimeout(() => setEntered(true), 10);
-    return () => clearTimeout(timeout);
-  }, [location.pathname]);
+  const stack = [
+    {
+      category: "Languages",
+      skills: "TypeScript, Dart, Java, Kotlin, PHP, C/C++",
+    },
+    {
+      category: "Frontend & Mobile",
+      skills: "Flutter, React, Tailwind CSS",
+    },
+    {
+      category: "Backend & Tooling",
+      skills: "NestJS, Laravel, PostgreSQL, SQLite, Docker, Git",
+    },
+  ];
 
   return (
-    <main
-      className={[
-        "flex flex-col items-center justify-center min-h-screen w-full transition-all duration-400",
-        entered
-          ? "opacity-100 scale-100 pointer-events-auto"
-          : "opacity-0 scale-95 translate-y-5 pointer-events-none",
-      ].join(" ")}
-    >
-      <div>
-        <h1 className="text-white text-4xl select-none">Pedro Monteiro</h1>
-        <h2 className="text-gray-400 text-2xl select-none text-start">
-          Full Stack Developer
+    <div className="space-y-8 w-full max-w-xl mx-auto py-2">
+      <header className="space-y-3">
+        <div className="flex flex-row items-center justify-between gap-2">
+          <div>
+            <h1 className="text-xl font-medium text-neutral-100">
+              Pedro Monteiro
+            </h1>
+            <p className="text-sm text-neutral-400">Software Engineer</p>
+          </div>
+
+          <a
+            href="/Pedro_Monteiro_Resume.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group inline-flex items-center text-xs font-mono text-neutral-400 hover:text-white transition-colors self-auto"
+          >
+            <span>View Resume</span>
+            <span className="inline-block ml-1 text-neutral-400 group-hover:text-white transition-transform duration-150 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 select-none">
+              ↗
+            </span>
+          </a>
+        </div>
+
+        <p className="text-sm text-neutral-300 leading-relaxed">
+          Software Engineering student at FEUP and Co-head of Projects at
+          NIAEFEUP. Focused on crafting performant web and mobile
+          applications with thoughtful, minimal interfaces.
+        </p>
+      </header>
+
+      <section className="space-y-3 pt-2">
+        <h2 className="text-sm font-medium text-neutral-200">Currently</h2>
+        <ul className="space-y-2.5 text-sm text-neutral-400 leading-relaxed">
+          <li className="flex items-start gap-2.5">
+            <span className="text-neutral-600 select-none mt-0.5">•</span>
+            <span>
+              Co-leading the projects department at{" "}
+              <a
+                href="https://niaefeup.pt"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-neutral-200 hover:text-white underline decoration-white/20 underline-offset-4 transition-colors"
+              >
+                NIAEFEUP
+              </a>
+              , steering technical development for{" "}
+              <span className="text-neutral-200">uni</span> and{" "}
+              <span className="text-neutral-200">NIddle</span>.
+            </span>
+          </li>
+          <li className="flex items-start gap-2.5">
+            <span className="text-neutral-600 select-none mt-0.5">•</span>
+            <span>
+              Co-leading informatics at{" "}
+              <a
+                href="https://sinf.pt"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-neutral-200 hover:text-white underline decoration-white/20 underline-offset-4 transition-colors"
+              >
+                SINF 2026
+              </a>
+              , developing the event platform and real-time engagement
+              features.
+            </span>
+          </li>
+          <li className="flex items-start gap-2.5">
+            <span className="text-neutral-600 select-none mt-0.5">•</span>
+            <span>
+              Starting my Software Engineering Masters degree at{" "}
+              <span className="text-neutral-200">FEUP</span> in Porto.
+            </span>
+          </li>
+        </ul>
+      </section>
+
+      <section className="space-y-3 pt-2">
+        <h2 className="text-sm font-medium text-neutral-200">
+          Technical Focus
         </h2>
-      </div>
-      <footer className="fixed bottom-0 left-0 w-full flex justify-center gap-8 mb-4">
-        <a
-          target="_blank"
-          rel="noopener noreferrer"
-          href="https://github.com/pedroafmonteiro"
-          className="text-gray-400 select-none"
-        >
-          GitHub
-        </a>
-        <a
-          target="_blank"
-          rel="noopener noreferrer"
-          href="https://linkedin.com/in/pedro10monteiro"
-          className="text-gray-400 select-none"
-        >
-          Linkedin
-        </a>
-      </footer>
-    </main>
+        <div className="divide-y divide-white/5">
+          {stack.map((item) => (
+            <div
+              key={item.category}
+              className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 sm:gap-4 py-3 first:pt-0"
+            >
+              <span className="text-sm text-neutral-400 shrink-0">
+                {item.category}
+              </span>
+              <span className="font-mono text-xs text-neutral-300 sm:text-right">
+                {item.skills}
+              </span>
+            </div>
+          ))}
+        </div>
+      </section>
+    </div>
   );
 };
 
