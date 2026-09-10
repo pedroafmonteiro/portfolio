@@ -17,4 +17,3 @@ export {
   type ShaderHandle,
 };
 export default BackgroundShader;
-

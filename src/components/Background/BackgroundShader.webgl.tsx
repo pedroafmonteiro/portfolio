@@ -219,7 +219,14 @@ export type BackgroundShaderProps = {
   style?: CSSProperties;
 };
 
-export function BackgroundShader({ theme = "dark", background, time, onError, className, style }: BackgroundShaderProps) {
+export function BackgroundShader({
+  theme = "dark",
+  background,
+  time,
+  onError,
+  className,
+  style,
+}: BackgroundShaderProps) {
   const canvas = useRef<HTMLCanvasElement>(null);
   const shader = useRef<ShaderHandle | null>(null);
   const latestTheme = useRef(theme);
@@ -264,7 +271,9 @@ export function BackgroundShader({ theme = "dark", background, time, onError, cl
       shader.current = handle;
       if (latestTime.current !== undefined) handle.render(latestTime.current);
     } catch (error) {
-      options.onError?.(error instanceof Error ? error : new Error(String(error)));
+      options.onError?.(
+        error instanceof Error ? error : new Error(String(error)),
+      );
     }
     return () => {
       controller.abort();
@@ -273,7 +282,14 @@ export function BackgroundShader({ theme = "dark", background, time, onError, cl
     };
   }, [dark, light, animated]);
 
-  return <canvas ref={canvas} className={className} style={{ display: "block", width: "100%", height: "100%", ...style }} aria-hidden="true" />;
+  return (
+    <canvas
+      ref={canvas}
+      className={className}
+      style={{ display: "block", width: "100%", height: "100%", ...style }}
+      aria-hidden="true"
+    />
+  );
 }
 
 const MAX_PIXELS = 1000000;
@@ -283,16 +299,30 @@ const FRAME_INTERVAL = 1000 / TARGET_FPS;
 
 function parseHex(hex: string): [number, number, number] {
   const match = /^#([0-9a-f]{6})$/i.exec(hex.trim());
-  if (!match) throw new Error(`Background colours must be #rrggbb, got "${hex}".`);
-  return [0, 2, 4].map((i) => parseInt(match[1].slice(i, i + 2), 16) / 255) as [number, number, number];
+  if (!match)
+    throw new Error(`Background colours must be #rrggbb, got "${hex}".`);
+  return [0, 2, 4].map((i) => parseInt(match[1].slice(i, i + 2), 16) / 255) as [
+    number,
+    number,
+    number,
+  ];
 }
 
-function animate(options: ShaderOptions, draw: (time: number, theme: number, pixelRatio: number) => void, canvas: HTMLCanvasElement, release: () => void, maxDimension = Infinity): ShaderHandle {
+function animate(
+  options: ShaderOptions,
+  draw: (time: number, theme: number, pixelRatio: number) => void,
+  canvas: HTMLCanvasElement,
+  release: () => void,
+  maxDimension = Infinity,
+): ShaderHandle {
   const autoplay = options.autoplay !== false;
   const stillness = window.matchMedia("(prefers-reduced-motion: reduce)");
-  let resolution = window.matchMedia(`(resolution: ${window.devicePixelRatio || 1}dppx)`);
+  let resolution = window.matchMedia(
+    `(resolution: ${window.devicePixelRatio || 1}dppx)`,
+  );
   let deviceRatio = window.devicePixelRatio || 1;
-  let width = canvas.clientWidth, height = canvas.clientHeight;
+  let width = canvas.clientWidth,
+    height = canvas.clientHeight;
   let visible = true;
   let disposed = false;
   let targetTheme = options.theme === "light" ? 1 : 0;
@@ -307,12 +337,21 @@ function animate(options: ShaderOptions, draw: (time: number, theme: number, pix
     return !disposed && !document.hidden && visible && width > 0 && height > 0;
   }
 
-  const isMobile = typeof window !== "undefined" && window.matchMedia("(pointer: coarse), (max-width: 768px)").matches;
+  const isMobile =
+    typeof window !== "undefined" &&
+    window.matchMedia("(pointer: coarse), (max-width: 768px)").matches;
 
   function fitCanvas() {
     const maxScale = isMobile ? 0.75 : 1.0;
-    const scale = Math.min(deviceRatio, maxScale, Math.sqrt(MAX_PIXELS / (width * height)), maxDimension / width, maxDimension / height);
-    const w = Math.max(1, Math.floor(width * scale)), h = Math.max(1, Math.floor(height * scale));
+    const scale = Math.min(
+      deviceRatio,
+      maxScale,
+      Math.sqrt(MAX_PIXELS / (width * height)),
+      maxDimension / width,
+      maxDimension / height,
+    );
+    const w = Math.max(1, Math.floor(width * scale)),
+      h = Math.max(1, Math.floor(height * scale));
     if (canvas.width !== w || canvas.height !== h) {
       canvas.width = w;
       canvas.height = h;
@@ -348,7 +387,10 @@ function animate(options: ShaderOptions, draw: (time: number, theme: number, pix
 
   function tick(now: number) {
     frame = 0;
-    if (!canDraw()) { previous = null; return; }
+    if (!canDraw()) {
+      previous = null;
+      return;
+    }
 
     const timeSinceLastRender = now - lastFrameTime;
     if (timeSinceLastRender < FRAME_INTERVAL) {
@@ -356,7 +398,8 @@ function animate(options: ShaderOptions, draw: (time: number, theme: number, pix
       return;
     }
 
-    const delta = previous === null ? 0 : Math.min((now - previous) / 1000, 0.1);
+    const delta =
+      previous === null ? 0 : Math.min((now - previous) / 1000, 0.1);
     previous = now;
     lastFrameTime = now - (timeSinceLastRender % FRAME_INTERVAL);
     if (autoplay) {
@@ -424,19 +467,28 @@ function animate(options: ShaderOptions, draw: (time: number, theme: number, pix
       if (disposed) return;
       targetTheme = next === "light" ? 1 : 0;
       if (autoplay) refresh();
-      else { theme = targetTheme; render(lastTime); }
+      else {
+        theme = targetTheme;
+        render(lastTime);
+      }
     },
     render,
     destroy,
   };
 }
 
-function attach(gl: WebGL2RenderingContext, program: WebGLProgram, type: number, source: string) {
+function attach(
+  gl: WebGL2RenderingContext,
+  program: WebGLProgram,
+  type: number,
+  source: string,
+) {
   const shader = gl.createShader(type);
   if (!shader) throw new Error("WebGL could not create a shader object.");
   gl.shaderSource(shader, source);
   gl.compileShader(shader);
-  if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) throw new Error(`Shader failed to compile: ${gl.getShaderInfoLog(shader)}`);
+  if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS))
+    throw new Error(`Shader failed to compile: ${gl.getShaderInfoLog(shader)}`);
   gl.attachShader(program, shader);
   gl.deleteShader(shader);
 }
@@ -446,29 +498,63 @@ function compile(gl: WebGL2RenderingContext, fragmentSource: string) {
   attach(gl, program, gl.VERTEX_SHADER, VERTEX_SHADER);
   attach(gl, program, gl.FRAGMENT_SHADER, fragmentSource);
   gl.linkProgram(program);
-  if (!gl.getProgramParameter(program, gl.LINK_STATUS)) throw new Error(`Shader failed to link: ${gl.getProgramInfoLog(program)}`);
+  if (!gl.getProgramParameter(program, gl.LINK_STATUS))
+    throw new Error(`Shader failed to link: ${gl.getProgramInfoLog(program)}`);
   return program;
 }
 
-function uniforms(gl: WebGL2RenderingContext, program: WebGLProgram, names: readonly string[]) {
-  return Object.fromEntries(names.map((name) => [name, gl.getUniformLocation(program, name)]));
+function uniforms(
+  gl: WebGL2RenderingContext,
+  program: WebGLProgram,
+  names: readonly string[],
+) {
+  return Object.fromEntries(
+    names.map((name) => [name, gl.getUniformLocation(program, name)]),
+  );
 }
 
-function createShader(canvas: HTMLCanvasElement, options: ShaderOptions = {}): ShaderHandle {
-  const gl = canvas.getContext("webgl2", { alpha: false, antialias: false, depth: false, stencil: false });
+function createShader(
+  canvas: HTMLCanvasElement,
+  options: ShaderOptions = {},
+): ShaderHandle {
+  const gl = canvas.getContext("webgl2", {
+    alpha: false,
+    antialias: false,
+    depth: false,
+    stencil: false,
+  });
   if (!gl) throw new Error("WebGL2 is not available in this browser.");
   const dark = parseHex(options.background?.dark ?? "#090909");
   const light = parseHex(options.background?.light ?? "#ffffff");
 
-  const isMobile = typeof window !== "undefined" && window.matchMedia("(pointer: coarse), (max-width: 768px)").matches;
+  const isMobile =
+    typeof window !== "undefined" &&
+    window.matchMedia("(pointer: coarse), (max-width: 768px)").matches;
   const fieldSource = isMobile
-    ? FIELD_SHADER.replace("const float LAYERS = 80.0;", "const float LAYERS = 42.0;")
+    ? FIELD_SHADER.replace(
+        "const float LAYERS = 80.0;",
+        "const float LAYERS = 42.0;",
+      )
     : FIELD_SHADER;
 
   const field = compile(gl, fieldSource);
-  const fieldUniforms = uniforms(gl, field, ["iResolution", "iTime", "uLightMode", "uDarkBackground", "uLightBackground"]);
+  const fieldUniforms = uniforms(gl, field, [
+    "iResolution",
+    "iTime",
+    "uLightMode",
+    "uDarkBackground",
+    "uLightBackground",
+  ]);
   const post = compile(gl, RARITY_SHADER);
-  const postUniforms = uniforms(gl, post, ["tScene", "iResolution", "iTime", "uLightMode", "uDarkBackground", "uLightBackground", "uPixelRatio"]);
+  const postUniforms = uniforms(gl, post, [
+    "tScene",
+    "iResolution",
+    "iTime",
+    "uLightMode",
+    "uDarkBackground",
+    "uLightBackground",
+    "uPixelRatio",
+  ]);
   const framebuffer = gl.createFramebuffer();
   const scene = gl.createTexture();
   gl.bindTexture(gl.TEXTURE_2D, scene);
@@ -476,9 +562,14 @@ function createShader(canvas: HTMLCanvasElement, options: ShaderOptions = {}): S
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-  let sceneWidth = 0, sceneHeight = 0;
+  let sceneWidth = 0,
+    sceneHeight = 0;
 
-  const setFrame = (locations: Record<string, WebGLUniformLocation | null>, time: number, theme: number) => {
+  const setFrame = (
+    locations: Record<string, WebGLUniformLocation | null>,
+    time: number,
+    theme: number,
+  ) => {
     gl.uniform2f(locations.iResolution, canvas.width, canvas.height);
     gl.uniform1f(locations.iTime, time);
     gl.uniform1f(locations.uLightMode, theme);
@@ -486,46 +577,74 @@ function createShader(canvas: HTMLCanvasElement, options: ShaderOptions = {}): S
     gl.uniform3fv(locations.uLightBackground, light);
   };
 
-  return animate(options, (time, theme, pixelRatio) => {
-    const { width, height } = canvas;
-    gl.viewport(0, 0, width, height);
-    if (sceneWidth !== width || sceneHeight !== height) {
-      sceneWidth = width;
-      sceneHeight = height;
-      gl.bindTexture(gl.TEXTURE_2D, scene);
-      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
-      gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
-      gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, scene, 0);
-      gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-    }
-    const drawThemed = (mode: number) => {
-      gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
-      gl.useProgram(field);
-      setFrame(fieldUniforms, time, mode);
-      gl.drawArrays(gl.TRIANGLES, 0, 3);
-      gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+  return animate(
+    options,
+    (time, theme, pixelRatio) => {
+      const { width, height } = canvas;
+      gl.viewport(0, 0, width, height);
+      if (sceneWidth !== width || sceneHeight !== height) {
+        sceneWidth = width;
+        sceneHeight = height;
+        gl.bindTexture(gl.TEXTURE_2D, scene);
+        gl.texImage2D(
+          gl.TEXTURE_2D,
+          0,
+          gl.RGBA,
+          width,
+          height,
+          0,
+          gl.RGBA,
+          gl.UNSIGNED_BYTE,
+          null,
+        );
+        gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
+        gl.framebufferTexture2D(
+          gl.FRAMEBUFFER,
+          gl.COLOR_ATTACHMENT0,
+          gl.TEXTURE_2D,
+          scene,
+          0,
+        );
+        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+      }
+      const drawThemed = (mode: number) => {
+        gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
+        gl.useProgram(field);
+        setFrame(fieldUniforms, time, mode);
+        gl.drawArrays(gl.TRIANGLES, 0, 3);
+        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 
-      gl.useProgram(post);
-      setFrame(postUniforms, time, mode);
-      gl.uniform1f(postUniforms.uPixelRatio, pixelRatio);
-      gl.activeTexture(gl.TEXTURE0);
-      gl.bindTexture(gl.TEXTURE_2D, scene);
-      gl.uniform1i(postUniforms.tScene, 0);
-      gl.drawArrays(gl.TRIANGLES, 0, 3);
-    };
-    if (theme <= 0 || theme >= 1) { drawThemed(theme); return; }
-    drawThemed(0);
-    gl.enable(gl.BLEND);
-    gl.blendColor(0, 0, 0, theme);
-    gl.blendFunc(gl.CONSTANT_ALPHA, gl.ONE_MINUS_CONSTANT_ALPHA);
-    drawThemed(1);
-    gl.disable(gl.BLEND);
-  }, canvas, () => {
-    gl.deleteProgram(field);
-    gl.deleteProgram(post);
-    gl.deleteFramebuffer(framebuffer);
-    gl.deleteTexture(scene);
-  }, Math.min(gl.getParameter(gl.MAX_TEXTURE_SIZE), gl.getParameter(gl.MAX_RENDERBUFFER_SIZE)));
+        gl.useProgram(post);
+        setFrame(postUniforms, time, mode);
+        gl.uniform1f(postUniforms.uPixelRatio, pixelRatio);
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_2D, scene);
+        gl.uniform1i(postUniforms.tScene, 0);
+        gl.drawArrays(gl.TRIANGLES, 0, 3);
+      };
+      if (theme <= 0 || theme >= 1) {
+        drawThemed(theme);
+        return;
+      }
+      drawThemed(0);
+      gl.enable(gl.BLEND);
+      gl.blendColor(0, 0, 0, theme);
+      gl.blendFunc(gl.CONSTANT_ALPHA, gl.ONE_MINUS_CONSTANT_ALPHA);
+      drawThemed(1);
+      gl.disable(gl.BLEND);
+    },
+    canvas,
+    () => {
+      gl.deleteProgram(field);
+      gl.deleteProgram(post);
+      gl.deleteFramebuffer(framebuffer);
+      gl.deleteTexture(scene);
+    },
+    Math.min(
+      gl.getParameter(gl.MAX_TEXTURE_SIZE),
+      gl.getParameter(gl.MAX_RENDERBUFFER_SIZE),
+    ),
+  );
 }
 
 export default BackgroundShader;

@@ -4,7 +4,10 @@ import TextInput from "../components/Inputs/TextInput";
 import TextArea from "../components/Inputs/TextArea";
 import Button from "../components/Inputs/Button";
 
-const GithubIcon = ({ className = "w-4 h-4", ...props }: SVGProps<SVGSVGElement>) => (
+const GithubIcon = ({
+  className = "w-4 h-4",
+  ...props
+}: SVGProps<SVGSVGElement>) => (
   <svg
     viewBox="0 0 24 24"
     fill="none"
@@ -20,7 +23,10 @@ const GithubIcon = ({ className = "w-4 h-4", ...props }: SVGProps<SVGSVGElement>
   </svg>
 );
 
-const LinkedinIcon = ({ className = "w-4 h-4", ...props }: SVGProps<SVGSVGElement>) => (
+const LinkedinIcon = ({
+  className = "w-4 h-4",
+  ...props
+}: SVGProps<SVGSVGElement>) => (
   <svg
     viewBox="0 0 24 24"
     fill="none"
@@ -110,94 +116,100 @@ const Contact = () => {
 
   return (
     <div className="space-y-8 w-full max-w-xl mx-auto py-2">
-        <header className="space-y-1">
-          <h1 className="text-xl font-medium text-neutral-100">Contact</h1>
-          <p className="text-sm text-neutral-400">
-            If you have any questions, want to collaborate, or just say hi,
-            feel free to reach out!
-          </p>
-        </header>
+      <header className="space-y-1">
+        <h1 className="text-xl font-medium text-neutral-100">Contact</h1>
+        <p className="text-sm text-neutral-400">
+          If you have any questions, want to collaborate, or just say hi, feel
+          free to reach out!
+        </p>
+      </header>
 
-        <form onSubmit={handleSubmit} className="space-y-3">
-          <input type="hidden" name="_captcha" value="false" />
-          <TextInput
-            type="text"
-            label="Name"
-            id="name"
-            name="name"
-            placeholder="Your name"
-            required
+      <form onSubmit={handleSubmit} className="space-y-3">
+        <input type="hidden" name="_captcha" value="false" />
+        <TextInput
+          type="text"
+          label="Name"
+          id="name"
+          name="name"
+          placeholder="Your name"
+          required
+        />
+        <TextInput
+          type="email"
+          label="Email"
+          id="email"
+          name="email"
+          placeholder="you@example.com"
+          required
+        />
+        <TextInput
+          type="text"
+          label="Subject"
+          id="subject"
+          name="subject"
+          placeholder="What's this about?"
+          required
+        />
+        <TextArea
+          label="Message"
+          id="message"
+          name="message"
+          placeholder="Write your message here..."
+          required
+        />
+        <div className="pt-1">
+          <Button
+            type="submit"
+            baseText="Send message"
+            loadingText="Sending..."
+            successText="Message sent"
+            errorText="Couldn't send — try again"
+            isLoading={isLoading}
+            isSuccess={isSuccess}
+            isError={isError}
           />
-          <TextInput
-            type="email"
-            label="Email"
-            id="email"
-            name="email"
-            placeholder="you@example.com"
-            required
-          />
-          <TextInput
-            type="text"
-            label="Subject"
-            id="subject"
-            name="subject"
-            placeholder="What's this about?"
-            required
-          />
-          <TextArea
-            label="Message"
-            id="message"
-            name="message"
-            placeholder="Write your message here..."
-            required
-          />
-          <div className="pt-1">
-            <Button
-              type="submit"
-              baseText="Send message"
-              loadingText="Sending..."
-              successText="Message sent"
-              errorText="Couldn't send — try again"
-              isLoading={isLoading}
-              isSuccess={isSuccess}
-              isError={isError}
-            />
-          </div>
-        </form>
+        </div>
+      </form>
 
-        <section className="pt-6 border-t border-white/5 space-y-4">
-          <h2 className="text-sm font-medium text-neutral-300">
-            Direct & Socials
-          </h2>
+      <section className="pt-6 border-t border-white/5 space-y-4">
+        <h2 className="text-sm font-medium text-neutral-300">
+          Direct & Socials
+        </h2>
 
-          <div className="divide-y divide-white/5">
-            {socials.map((social) => {
-              const Icon = social.icon;
-              return (
-                <a
-                  key={social.label}
-                  href={social.href}
-                  target={social.href.startsWith("mailto:") ? undefined : "_blank"}
-                  rel={social.href.startsWith("mailto:") ? undefined : "noopener noreferrer"}
-                  className="group flex items-center justify-between py-3 first:pt-0 transition-colors"
-                  aria-label={`${social.label}: ${social.value}`}
-                >
-                  <div className="flex items-center text-neutral-400 group-hover:text-white transition-colors">
-                    <Icon className="w-4 h-4" />
-                    <span className="sr-only">{social.label}</span>
-                  </div>
-                  <span className="font-mono text-sm text-neutral-200 group-hover:text-white transition-colors">
-                    {social.value}
-                    <span className="inline-block ml-1.5 text-neutral-400 group-hover:text-white transition-transform duration-150 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 select-none">
-                      ↗
-                    </span>
+        <div className="divide-y divide-white/5">
+          {socials.map((social) => {
+            const Icon = social.icon;
+            return (
+              <a
+                key={social.label}
+                href={social.href}
+                target={
+                  social.href.startsWith("mailto:") ? undefined : "_blank"
+                }
+                rel={
+                  social.href.startsWith("mailto:")
+                    ? undefined
+                    : "noopener noreferrer"
+                }
+                className="group flex items-center justify-between py-3 first:pt-0 transition-colors"
+                aria-label={`${social.label}: ${social.value}`}
+              >
+                <div className="flex items-center text-neutral-400 group-hover:text-white transition-colors">
+                  <Icon className="w-4 h-4" />
+                  <span className="sr-only">{social.label}</span>
+                </div>
+                <span className="font-mono text-sm text-neutral-200 group-hover:text-white transition-colors">
+                  {social.value}
+                  <span className="inline-block ml-1.5 text-neutral-400 group-hover:text-white transition-transform duration-150 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 select-none">
+                    ↗
                   </span>
-                </a>
-              );
-            })}
-          </div>
-        </section>
-      </div>
+                </span>
+              </a>
+            );
+          })}
+        </div>
+      </section>
+    </div>
   );
 };
 

@@ -1,15 +1,11 @@
 import type { TextareaHTMLAttributes } from "react";
 
-export interface TextAreaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
+export interface TextAreaProps
+  extends TextareaHTMLAttributes<HTMLTextAreaElement> {
   label?: string;
 }
 
-const TextArea = ({
-  label,
-  id,
-  className = "",
-  ...props
-}: TextAreaProps) => {
+const TextArea = ({ label, id, className = "", ...props }: TextAreaProps) => {
   return (
     <div className="flex flex-col gap-1.5 w-full py-1">
       {label && (

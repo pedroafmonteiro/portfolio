@@ -27,10 +27,7 @@ const ContentItem = ({
   const badge = meta || date || websiteLabel;
 
   return (
-    <article
-      className={`first:pt-0 pt-6 ${className}`.trim()}
-      {...props}
-    >
+    <article className={`first:pt-0 pt-6 ${className}`.trim()} {...props}>
       <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 sm:gap-4">
         {href ? (
           <a
@@ -67,4 +64,3 @@ const ContentItem = ({
 };
 
 export default ContentItem;
-

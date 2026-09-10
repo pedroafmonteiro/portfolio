@@ -1,0 +1,17 @@
+{
+  "name": "Pedro Monteiro - Software Engineer",
+  "short_name": "Pedro Monteiro",
+  "description": "Pedro Monteiro's personal website and portfolio. Software Engineer based in Porto, Portugal.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#101010",
+  "theme_color": "#101010",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "16x16 32x32 48x48",
+      "type": "image/x-icon"
+    }
+  ]
+}
+

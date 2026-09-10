@@ -238,10 +238,21 @@ export type BackgroundShaderProps = {
 };
 
 function hasWebGPUSupport(): boolean {
-  return typeof navigator !== "undefined" && "gpu" in navigator && Boolean(navigator.gpu);
+  return (
+    typeof navigator !== "undefined" &&
+    "gpu" in navigator &&
+    Boolean(navigator.gpu)
+  );
 }
 
-export function WebGPUBackgroundShader({ theme = "dark", background, time, onError, className, style }: BackgroundShaderProps) {
+export function WebGPUBackgroundShader({
+  theme = "dark",
+  background,
+  time,
+  onError,
+  className,
+  style,
+}: BackgroundShaderProps) {
   const canvas = useRef<HTMLCanvasElement>(null);
   const shader = useRef<ShaderHandle | null>(null);
   const latestTheme = useRef(theme);
@@ -282,15 +293,25 @@ export function WebGPUBackgroundShader({ theme = "dark", background, time, onErr
       },
     };
 
-    createShader(element, options).then((created) => {
-      if (controller.signal.aborted) { created.destroy(); return; }
-      handle = created;
-      shader.current = created;
-      if (latestTheme.current !== options.theme) created.setTheme(latestTheme.current);
-      if (latestTime.current !== undefined) created.render(latestTime.current);
-    }).catch((error: unknown) => {
-      if (!controller.signal.aborted) options.onError?.(error instanceof Error ? error : new Error(String(error)));
-    });
+    createShader(element, options)
+      .then((created) => {
+        if (controller.signal.aborted) {
+          created.destroy();
+          return;
+        }
+        handle = created;
+        shader.current = created;
+        if (latestTheme.current !== options.theme)
+          created.setTheme(latestTheme.current);
+        if (latestTime.current !== undefined)
+          created.render(latestTime.current);
+      })
+      .catch((error: unknown) => {
+        if (!controller.signal.aborted)
+          options.onError?.(
+            error instanceof Error ? error : new Error(String(error)),
+          );
+      });
     return () => {
       controller.abort();
       handle?.destroy();
@@ -298,7 +319,14 @@ export function WebGPUBackgroundShader({ theme = "dark", background, time, onErr
     };
   }, [dark, light, animated]);
 
-  return <canvas ref={canvas} className={className} style={{ display: "block", width: "100%", height: "100%", ...style }} aria-hidden="true" />;
+  return (
+    <canvas
+      ref={canvas}
+      className={className}
+      style={{ display: "block", width: "100%", height: "100%", ...style }}
+      aria-hidden="true"
+    />
+  );
 }
 
 export function BackgroundShader(props: BackgroundShaderProps) {
@@ -313,14 +341,16 @@ export function BackgroundShader(props: BackgroundShaderProps) {
       key="webgpu"
       {...props}
       onError={(error) => {
-        console.warn("WebGPU initialization failed, falling back to WebGL2:", error);
+        console.warn(
+          "WebGPU initialization failed, falling back to WebGL2:",
+          error,
+        );
         setUseWebGL(true);
         props.onError?.(error);
       }}
     />
   );
 }
-
 
 const MAX_PIXELS = 1000000;
 const THEME_EASE = 7;
@@ -329,16 +359,30 @@ const FRAME_INTERVAL = 1000 / TARGET_FPS;
 
 function parseHex(hex: string): [number, number, number] {
   const match = /^#([0-9a-f]{6})$/i.exec(hex.trim());
-  if (!match) throw new Error(`Background colours must be #rrggbb, got "${hex}".`);
-  return [0, 2, 4].map((i) => parseInt(match[1].slice(i, i + 2), 16) / 255) as [number, number, number];
+  if (!match)
+    throw new Error(`Background colours must be #rrggbb, got "${hex}".`);
+  return [0, 2, 4].map((i) => parseInt(match[1].slice(i, i + 2), 16) / 255) as [
+    number,
+    number,
+    number,
+  ];
 }
 
-function animate(options: ShaderOptions, draw: (time: number, theme: number, pixelRatio: number) => void, canvas: HTMLCanvasElement, release: () => void, maxDimension = Infinity): ShaderHandle {
+function animate(
+  options: ShaderOptions,
+  draw: (time: number, theme: number, pixelRatio: number) => void,
+  canvas: HTMLCanvasElement,
+  release: () => void,
+  maxDimension = Infinity,
+): ShaderHandle {
   const autoplay = options.autoplay !== false;
   const stillness = window.matchMedia("(prefers-reduced-motion: reduce)");
-  let resolution = window.matchMedia(`(resolution: ${window.devicePixelRatio || 1}dppx)`);
+  let resolution = window.matchMedia(
+    `(resolution: ${window.devicePixelRatio || 1}dppx)`,
+  );
   let deviceRatio = window.devicePixelRatio || 1;
-  let width = canvas.clientWidth, height = canvas.clientHeight;
+  let width = canvas.clientWidth,
+    height = canvas.clientHeight;
   let visible = true;
   let disposed = false;
   let targetTheme = options.theme === "light" ? 1 : 0;
@@ -353,12 +397,21 @@ function animate(options: ShaderOptions, draw: (time: number, theme: number, pix
     return !disposed && !document.hidden && visible && width > 0 && height > 0;
   }
 
-  const isMobile = typeof window !== "undefined" && window.matchMedia("(pointer: coarse), (max-width: 768px)").matches;
+  const isMobile =
+    typeof window !== "undefined" &&
+    window.matchMedia("(pointer: coarse), (max-width: 768px)").matches;
 
   function fitCanvas() {
     const maxScale = isMobile ? 0.75 : 1.0;
-    const scale = Math.min(deviceRatio, maxScale, Math.sqrt(MAX_PIXELS / (width * height)), maxDimension / width, maxDimension / height);
-    const w = Math.max(1, Math.floor(width * scale)), h = Math.max(1, Math.floor(height * scale));
+    const scale = Math.min(
+      deviceRatio,
+      maxScale,
+      Math.sqrt(MAX_PIXELS / (width * height)),
+      maxDimension / width,
+      maxDimension / height,
+    );
+    const w = Math.max(1, Math.floor(width * scale)),
+      h = Math.max(1, Math.floor(height * scale));
     if (canvas.width !== w || canvas.height !== h) {
       canvas.width = w;
       canvas.height = h;
@@ -394,7 +447,10 @@ function animate(options: ShaderOptions, draw: (time: number, theme: number, pix
 
   function tick(now: number) {
     frame = 0;
-    if (!canDraw()) { previous = null; return; }
+    if (!canDraw()) {
+      previous = null;
+      return;
+    }
 
     const timeSinceLastRender = now - lastFrameTime;
     if (timeSinceLastRender < FRAME_INTERVAL) {
@@ -402,7 +458,8 @@ function animate(options: ShaderOptions, draw: (time: number, theme: number, pix
       return;
     }
 
-    const delta = previous === null ? 0 : Math.min((now - previous) / 1000, 0.1);
+    const delta =
+      previous === null ? 0 : Math.min((now - previous) / 1000, 0.1);
     previous = now;
     lastFrameTime = now - (timeSinceLastRender % FRAME_INTERVAL);
     if (autoplay) {
@@ -470,7 +527,10 @@ function animate(options: ShaderOptions, draw: (time: number, theme: number, pix
       if (disposed) return;
       targetTheme = next === "light" ? 1 : 0;
       if (autoplay) refresh();
-      else { theme = targetTheme; render(lastTime); }
+      else {
+        theme = targetTheme;
+        render(lastTime);
+      }
     },
     render,
     destroy,
@@ -479,11 +539,15 @@ function animate(options: ShaderOptions, draw: (time: number, theme: number, pix
 
 const UNIFORM_FLOATS = 12;
 
-async function createShader(canvas: HTMLCanvasElement, options: ShaderOptions = {}): Promise<ShaderHandle> {
+async function createShader(
+  canvas: HTMLCanvasElement,
+  options: ShaderOptions = {},
+): Promise<ShaderHandle> {
   const dark = parseHex(options.background?.dark ?? "#090909");
   const light = parseHex(options.background?.light ?? "#ffffff");
   options.signal?.throwIfAborted();
-  if (!navigator.gpu) throw new Error("WebGPU is not available in this browser.");
+  if (!navigator.gpu)
+    throw new Error("WebGPU is not available in this browser.");
   const adapter = await navigator.gpu.requestAdapter();
   options.signal?.throwIfAborted();
   if (!adapter) throw new Error("No WebGPU adapter is available.");
@@ -531,17 +595,26 @@ async function createShader(canvas: HTMLCanvasElement, options: ShaderOptions = 
   options.signal?.addEventListener("abort", abort, { once: true });
   device.addEventListener("uncapturederror", gpuError);
   void device.lost.then((info) => {
-    if (!released) fail(new Error(`WebGPU device lost: ${info.message || info.reason}.`));
+    if (!released)
+      fail(new Error(`WebGPU device lost: ${info.message || info.reason}.`));
   });
 
   try {
     checkActive();
     const format = navigator.gpu.getPreferredCanvasFormat();
-    const uniforms = device.createBuffer({ size: UNIFORM_FLOATS * 4, usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST });
+    const uniforms = device.createBuffer({
+      size: UNIFORM_FLOATS * 4,
+      usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
+    });
     const uniformData = new Float32Array(UNIFORM_FLOATS);
-    const isMobile = typeof window !== "undefined" && window.matchMedia("(pointer: coarse), (max-width: 768px)").matches;
+    const isMobile =
+      typeof window !== "undefined" &&
+      window.matchMedia("(pointer: coarse), (max-width: 768px)").matches;
     const fieldCode = isMobile
-      ? FIELD_SHADER.replace("const LAYERS: f32 = 80.0;", "const LAYERS: f32 = 42.0;")
+      ? FIELD_SHADER.replace(
+          "const LAYERS: f32 = 80.0;",
+          "const LAYERS: f32 = 42.0;",
+        )
       : FIELD_SHADER;
     const fieldModule = device.createShaderModule({ code: fieldCode });
     const postModule = device.createShaderModule({ code: RARITY_SHADER });
@@ -550,19 +623,42 @@ async function createShader(canvas: HTMLCanvasElement, options: ShaderOptions = 
       device.createRenderPipelineAsync({
         layout: "auto",
         vertex: { module: fieldModule, entryPoint: "vertexMain" },
-        fragment: { module: fieldModule, entryPoint: "fragmentMain", targets: [{ format: "rgba8unorm" }] },
+        fragment: {
+          module: fieldModule,
+          entryPoint: "fragmentMain",
+          targets: [{ format: "rgba8unorm" }],
+        },
         primitive: { topology: "triangle-list" },
       }),
       device.createRenderPipelineAsync({
         layout: "auto",
         vertex: { module: postModule, entryPoint: "vertexMain" },
-        fragment: { module: postModule, entryPoint: "fragmentMain", targets: [{ format }] },
+        fragment: {
+          module: postModule,
+          entryPoint: "fragmentMain",
+          targets: [{ format }],
+        },
         primitive: { topology: "triangle-list" },
       }),
       device.createRenderPipelineAsync({
         layout: "auto",
         vertex: { module: postModule, entryPoint: "vertexMain" },
-        fragment: { module: postModule, entryPoint: "fragmentMain", targets: [{ format, blend: { color: { srcFactor: "constant", dstFactor: "one-minus-constant" }, alpha: { srcFactor: "one", dstFactor: "zero" } } }] },
+        fragment: {
+          module: postModule,
+          entryPoint: "fragmentMain",
+          targets: [
+            {
+              format,
+              blend: {
+                color: {
+                  srcFactor: "constant",
+                  dstFactor: "one-minus-constant",
+                },
+                alpha: { srcFactor: "one", dstFactor: "zero" },
+              },
+            },
+          ],
+        },
         primitive: { topology: "triangle-list" },
       }),
     ]);
@@ -571,60 +667,119 @@ async function createShader(canvas: HTMLCanvasElement, options: ShaderOptions = 
       layout: fieldPipeline.getBindGroupLayout(0),
       entries: [{ binding: 0, resource: { buffer: uniforms } }],
     });
-    const sceneSampler = device.createSampler({ magFilter: "linear", minFilter: "linear", addressModeU: "clamp-to-edge", addressModeV: "clamp-to-edge" });
+    const sceneSampler = device.createSampler({
+      magFilter: "linear",
+      minFilter: "linear",
+      addressModeU: "clamp-to-edge",
+      addressModeV: "clamp-to-edge",
+    });
     let scene: GPUTexture | null = null;
     let sceneView: GPUTextureView | null = null;
     let postBindGroups: GPUBindGroup[] = [];
 
     function sceneFor(width: number, height: number) {
-      if (scene && sceneView && scene.width === width && scene.height === height) return { view: sceneView, postBindGroups };
+      if (
+        scene &&
+        sceneView &&
+        scene.width === width &&
+        scene.height === height
+      )
+        return { view: sceneView, postBindGroups };
       scene?.destroy();
-      scene = device.createTexture({ size: [width, height], format: "rgba8unorm", usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.TEXTURE_BINDING });
+      scene = device.createTexture({
+        size: [width, height],
+        format: "rgba8unorm",
+        usage:
+          GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.TEXTURE_BINDING,
+      });
       const view = scene.createView();
       sceneView = view;
-      postBindGroups = [postPipeline, postBlendPipeline].map((pipeline) => device.createBindGroup({
-        layout: pipeline.getBindGroupLayout(0),
-        entries: [
-          { binding: 0, resource: { buffer: uniforms } },
-          { binding: 1, resource: sceneSampler },
-          { binding: 2, resource: view },
-        ],
-      }));
+      postBindGroups = [postPipeline, postBlendPipeline].map((pipeline) =>
+        device.createBindGroup({
+          layout: pipeline.getBindGroupLayout(0),
+          entries: [
+            { binding: 0, resource: { buffer: uniforms } },
+            { binding: 1, resource: sceneSampler },
+            { binding: 2, resource: view },
+          ],
+        }),
+      );
       return { view, postBindGroups };
     }
 
     const canvasContext = canvas.getContext("webgpu");
-    if (!canvasContext) throw new Error("A WebGPU canvas context could not be created.");
+    if (!canvasContext)
+      throw new Error("A WebGPU canvas context could not be created.");
     context = canvasContext;
     context.configure({ device, format, alphaMode: "opaque" });
     configured = true;
 
-    handle = animate(options, (time, theme, pixelRatio) => {
-      const { width, height } = canvas;
-      const output = canvasContext.getCurrentTexture().createView();
-      const target = sceneFor(width, height);
-      const drawThemed = (mode: number, blend: boolean) => {
-        uniformData.set([width, height, time, mode, dark[0], dark[1], dark[2], pixelRatio, light[0], light[1], light[2], 0]);
-        device.queue.writeBuffer(uniforms, 0, uniformData);
-        const encoder = device.createCommandEncoder();
-        const fieldPass = encoder.beginRenderPass({ colorAttachments: [{ view: target.view, loadOp: "clear", storeOp: "store" }] });
-        fieldPass.setPipeline(fieldPipeline);
-        fieldPass.setBindGroup(0, fieldBindGroup);
-        fieldPass.draw(3);
-        fieldPass.end();
+    handle = animate(
+      options,
+      (time, theme, pixelRatio) => {
+        const { width, height } = canvas;
+        const output = canvasContext.getCurrentTexture().createView();
+        const target = sceneFor(width, height);
+        const drawThemed = (mode: number, blend: boolean) => {
+          uniformData.set([
+            width,
+            height,
+            time,
+            mode,
+            dark[0],
+            dark[1],
+            dark[2],
+            pixelRatio,
+            light[0],
+            light[1],
+            light[2],
+            0,
+          ]);
+          device.queue.writeBuffer(uniforms, 0, uniformData);
+          const encoder = device.createCommandEncoder();
+          const fieldPass = encoder.beginRenderPass({
+            colorAttachments: [
+              { view: target.view, loadOp: "clear", storeOp: "store" },
+            ],
+          });
+          fieldPass.setPipeline(fieldPipeline);
+          fieldPass.setBindGroup(0, fieldBindGroup);
+          fieldPass.draw(3);
+          fieldPass.end();
 
-        const postPass = encoder.beginRenderPass({ colorAttachments: [{ view: output, loadOp: blend ? "load" : "clear", storeOp: "store" }] });
-        postPass.setPipeline(blend ? postBlendPipeline : postPipeline);
-        postPass.setBindGroup(0, target.postBindGroups[blend ? 1 : 0]);
-        if (blend) postPass.setBlendConstant({ r: theme, g: theme, b: theme, a: theme });
-        postPass.draw(3);
-        postPass.end();
-        device.queue.submit([encoder.finish()]);
-      };
-      if (theme <= 0 || theme >= 1) { drawThemed(theme, false); return; }
-      drawThemed(0, false);
-      drawThemed(1, true);
-    }, canvas, release, device.limits.maxTextureDimension2D);
+          const postPass = encoder.beginRenderPass({
+            colorAttachments: [
+              {
+                view: output,
+                loadOp: blend ? "load" : "clear",
+                storeOp: "store",
+              },
+            ],
+          });
+          postPass.setPipeline(blend ? postBlendPipeline : postPipeline);
+          postPass.setBindGroup(0, target.postBindGroups[blend ? 1 : 0]);
+          if (blend)
+            postPass.setBlendConstant({
+              r: theme,
+              g: theme,
+              b: theme,
+              a: theme,
+            });
+          postPass.draw(3);
+          postPass.end();
+          device.queue.submit([encoder.finish()]);
+        };
+        if (theme <= 0 || theme >= 1) {
+          drawThemed(theme, false);
+          return;
+        }
+        drawThemed(0, false);
+        drawThemed(1, true);
+      },
+      canvas,
+      release,
+      device.limits.maxTextureDimension2D,
+    );
     return handle;
   } catch (error) {
     release();
@@ -633,4 +788,3 @@ async function createShader(canvas: HTMLCanvasElement, options: ShaderOptions = 
 }
 
 export default BackgroundShader;
-

@@ -40,8 +40,8 @@ const Home = () => {
 
         <p className="text-sm text-neutral-300 leading-relaxed">
           Software Engineering student at FEUP and Co-head of Projects at
-          NIAEFEUP. Focused on crafting performant web and mobile
-          applications with thoughtful, minimal interfaces.
+          NIAEFEUP. Focused on crafting performant web and mobile applications
+          with thoughtful, minimal interfaces.
         </p>
       </header>
 
@@ -77,8 +77,7 @@ const Home = () => {
               >
                 SINF 2026
               </a>
-              , developing the event platform and real-time engagement
-              features.
+              , developing the event platform and real-time engagement features.
             </span>
           </li>
           <li className="flex items-start gap-2.5">

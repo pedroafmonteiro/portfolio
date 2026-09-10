@@ -1,2 +1,4 @@
 User-agent: *
 Allow: /
+
+Sitemap: https://pedroafmonteiro.com/sitemap.xml
