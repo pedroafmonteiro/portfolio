@@ -6,13 +6,13 @@ import Experience from "./pages/Experience";
 import Projects from "./pages/Projects";
 import Contact from "./pages/Contact";
 import "./index.css";
-import NavBar from "./components/NavBar/NavBar";
+import { BackgroundShader } from "./components/Background/BackgroundShader";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <BrowserRouter>
-      <div className="fixed w-full z-1 flex justify-center">
-        <NavBar />
+      <div className="fixed inset-0 -z-10 pointer-events-none" aria-hidden="true">
+        <BackgroundShader theme="dark" background={{ dark: "#101010" }} />
       </div>
       <Routes>
         <Route path="/" element={<Home />} />
@@ -23,3 +23,4 @@ createRoot(document.getElementById("root")!).render(
     </BrowserRouter>
   </StrictMode>,
 );
+
