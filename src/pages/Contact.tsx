@@ -3,6 +3,7 @@ import { useLocation } from "react-router";
 import TextInput from "../components/Inputs/TextInput";
 import TextArea from "../components/Inputs/TextArea";
 import Button from "../components/Inputs/Button";
+import MainContent from "../components/Layout/MainContent";
 
 const Contact = () => {
   const [entered, setEntered] = useState(false);
@@ -65,14 +66,7 @@ const Contact = () => {
 
   return (
     <>
-      <main
-        className={[
-          "flex flex-col gap-4 items-center justify-center min-h-screen w-full transition-all duration-400 md:pt-24",
-          entered
-            ? "opacity-100 scale-100 pointer-events-auto"
-            : "opacity-0 scale-95 translate-y-5 pointer-events-none",
-        ].join(" ")}
-      >
+      <MainContent>
         <div className="p-4 md:w-3xl space-y-4">
           <header className="flex flex-col gap-2">
             <h1 className="text-neutral-200 text-4xl">Contact me</h1>
@@ -119,7 +113,7 @@ const Contact = () => {
             </div>
           </form>
         </div>
-      </main>
+      </MainContent>
     </>
   );
 };
