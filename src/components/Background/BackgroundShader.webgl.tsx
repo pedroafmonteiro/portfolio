@@ -35,13 +35,13 @@ out vec4 fragColor;
 const float HUE = 0.44996506;
 const float HUE_SPREAD = 0.482937187;
 const float HUE_TRAVEL = 1.49667442;
-const float CHROMA = 0.0818685591;
+const float CHROMA = 0.052;
 const float LIGHTNESS = 0.488406867;
 const float COLOUR_CYCLE = 0.142405465;
 const float THETA = 2.12193084;
 const float SHEAR = 0.971530795;
 const float SHRINK = 0.959410787;
-const float LAYERS = 80.0;
+const float LAYERS = 36.0;
 const float WARP_FREQ_X = 0.59972626;
 const float WARP_FREQ_Y = 2.34071779;
 const float WARP_AMP_X = 0.115653202;
@@ -54,7 +54,7 @@ const float TILT = -2.48987913;
 const float ZOOM = 1.09541845;
 const float CENTRE_X = 0.670728922;
 const float CENTRE_Y = -0.0207610726;
-const float GLOW_SIZE = 0.00200606743;
+const float GLOW_SIZE = 0.0016;
 const float FALLOFF = 0.434454501;
 const float VIGNETTE = 0.0962984115;
 const float FLOW_SPEED = 0.463184088;
@@ -276,8 +276,10 @@ export function BackgroundShader({ theme = "dark", background, time, onError, cl
   return <canvas ref={canvas} className={className} style={{ display: "block", width: "100%", height: "100%", ...style }} aria-hidden="true" />;
 }
 
-const MAX_PIXELS = 2400000;
+const MAX_PIXELS = 1000000;
 const THEME_EASE = 7;
+const TARGET_FPS = 30;
+const FRAME_INTERVAL = 1000 / TARGET_FPS;
 
 function parseHex(hex: string): [number, number, number] {
   const match = /^#([0-9a-f]{6})$/i.exec(hex.trim());
@@ -299,6 +301,7 @@ function animate(options: ShaderOptions, draw: (time: number, theme: number, pix
   let elapsed = 0;
   let lastTime = 0;
   let previous: number | null = null;
+  let lastFrameTime = 0;
 
   function canDraw() {
     return !disposed && !document.hidden && visible && width > 0 && height > 0;
@@ -307,7 +310,7 @@ function animate(options: ShaderOptions, draw: (time: number, theme: number, pix
   const isMobile = typeof window !== "undefined" && window.matchMedia("(pointer: coarse), (max-width: 768px)").matches;
 
   function fitCanvas() {
-    const maxScale = isMobile ? 1.0 : 2;
+    const maxScale = isMobile ? 0.75 : 1.0;
     const scale = Math.min(deviceRatio, maxScale, Math.sqrt(MAX_PIXELS / (width * height)), maxDimension / width, maxDimension / height);
     const w = Math.max(1, Math.floor(width * scale)), h = Math.max(1, Math.floor(height * scale));
     if (canvas.width !== w || canvas.height !== h) {
@@ -346,8 +349,16 @@ function animate(options: ShaderOptions, draw: (time: number, theme: number, pix
   function tick(now: number) {
     frame = 0;
     if (!canDraw()) { previous = null; return; }
+
+    const timeSinceLastRender = now - lastFrameTime;
+    if (timeSinceLastRender < FRAME_INTERVAL) {
+      if (autoplay && (!stillness.matches || theme !== targetTheme)) schedule();
+      return;
+    }
+
     const delta = previous === null ? 0 : Math.min((now - previous) / 1000, 0.1);
     previous = now;
+    lastFrameTime = now - (timeSinceLastRender % FRAME_INTERVAL);
     if (autoplay) {
       if (!stillness.matches) elapsed += delta;
       theme += (targetTheme - theme) * (1 - Math.exp(-delta * THEME_EASE));

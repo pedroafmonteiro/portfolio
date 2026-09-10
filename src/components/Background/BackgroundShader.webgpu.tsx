@@ -31,13 +31,13 @@ const FIELD_SHADER = `struct Uniforms {
 const HUE: f32 = 0.44996506;
 const HUE_SPREAD: f32 = 0.482937187;
 const HUE_TRAVEL: f32 = 1.49667442;
-const CHROMA: f32 = 0.0818685591;
+const CHROMA: f32 = 0.052;
 const LIGHTNESS: f32 = 0.488406867;
 const COLOUR_CYCLE: f32 = 0.142405465;
 const THETA: f32 = 2.12193084;
 const SHEAR: f32 = 0.971530795;
 const SHRINK: f32 = 0.959410787;
-const LAYERS: f32 = 80.0;
+const LAYERS: f32 = 36.0;
 const WARP_FREQ_X: f32 = 0.59972626;
 const WARP_FREQ_Y: f32 = 2.34071779;
 const WARP_AMP_X: f32 = 0.115653202;
@@ -50,7 +50,7 @@ const TILT: f32 = -2.48987913;
 const ZOOM: f32 = 1.09541845;
 const CENTRE_X: f32 = 0.670728922;
 const CENTRE_Y: f32 = -0.0207610726;
-const GLOW_SIZE: f32 = 0.00200606743;
+const GLOW_SIZE: f32 = 0.0016;
 const FALLOFF: f32 = 0.434454501;
 const VIGNETTE: f32 = 0.0962984115;
 const FLOW_SPEED: f32 = 0.463184088;
@@ -322,8 +322,10 @@ export function BackgroundShader(props: BackgroundShaderProps) {
 }
 
 
-const MAX_PIXELS = 2400000;
+const MAX_PIXELS = 1000000;
 const THEME_EASE = 7;
+const TARGET_FPS = 30;
+const FRAME_INTERVAL = 1000 / TARGET_FPS;
 
 function parseHex(hex: string): [number, number, number] {
   const match = /^#([0-9a-f]{6})$/i.exec(hex.trim());
@@ -345,6 +347,7 @@ function animate(options: ShaderOptions, draw: (time: number, theme: number, pix
   let elapsed = 0;
   let lastTime = 0;
   let previous: number | null = null;
+  let lastFrameTime = 0;
 
   function canDraw() {
     return !disposed && !document.hidden && visible && width > 0 && height > 0;
@@ -353,7 +356,7 @@ function animate(options: ShaderOptions, draw: (time: number, theme: number, pix
   const isMobile = typeof window !== "undefined" && window.matchMedia("(pointer: coarse), (max-width: 768px)").matches;
 
   function fitCanvas() {
-    const maxScale = isMobile ? 1.0 : 2;
+    const maxScale = isMobile ? 0.75 : 1.0;
     const scale = Math.min(deviceRatio, maxScale, Math.sqrt(MAX_PIXELS / (width * height)), maxDimension / width, maxDimension / height);
     const w = Math.max(1, Math.floor(width * scale)), h = Math.max(1, Math.floor(height * scale));
     if (canvas.width !== w || canvas.height !== h) {
@@ -392,8 +395,16 @@ function animate(options: ShaderOptions, draw: (time: number, theme: number, pix
   function tick(now: number) {
     frame = 0;
     if (!canDraw()) { previous = null; return; }
+
+    const timeSinceLastRender = now - lastFrameTime;
+    if (timeSinceLastRender < FRAME_INTERVAL) {
+      if (autoplay && (!stillness.matches || theme !== targetTheme)) schedule();
+      return;
+    }
+
     const delta = previous === null ? 0 : Math.min((now - previous) / 1000, 0.1);
     previous = now;
+    lastFrameTime = now - (timeSinceLastRender % FRAME_INTERVAL);
     if (autoplay) {
       if (!stillness.matches) elapsed += delta;
       theme += (targetTheme - theme) * (1 - Math.exp(-delta * THEME_EASE));

@@ -12,7 +12,7 @@ import MainContent from "./components/Layout/MainContent";
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <BrowserRouter>
-      <div className="fixed inset-0 -z-10 pointer-events-none" aria-hidden="true">
+      <div className="fixed inset-0 -z-10 pointer-events-none opacity-50" aria-hidden="true">
         <BackgroundShader theme="dark" background={{ dark: "#101010" }} />
       </div>
       <Routes>
