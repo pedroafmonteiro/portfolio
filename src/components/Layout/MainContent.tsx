@@ -12,7 +12,6 @@ import NavItem from "./NavItem";
 export interface MainContentProps extends HTMLAttributes<HTMLElement> {
     children?: ReactNode;
     className?: string;
-    nav?: ReactNode;
 }
 
 const navItems = [
@@ -25,7 +24,6 @@ const navItems = [
 const MainContent = ({
     children,
     className = "",
-    nav,
     ...props
 }: MainContentProps) => {
     const location = useLocation();
@@ -80,7 +78,7 @@ const MainContent = ({
             observer.disconnect();
             window.removeEventListener("resize", updateScrollState);
         };
-    }, [updateScrollState, children, location.pathname]);
+    }, [updateScrollState]);
 
     return (
         <div className="flex justify-center w-full">
@@ -135,7 +133,6 @@ const MainContent = ({
                                 key={item.label}
                                 label={item.label}
                                 route={item.route}
-                                onClick={() => { }}
                             />
                         ))}
                     </div>

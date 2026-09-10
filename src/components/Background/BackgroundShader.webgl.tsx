@@ -454,7 +454,7 @@ function uniforms(gl: WebGL2RenderingContext, program: WebGLProgram, names: read
   return Object.fromEntries(names.map((name) => [name, gl.getUniformLocation(program, name)]));
 }
 
-export function createShader(canvas: HTMLCanvasElement, options: ShaderOptions = {}): ShaderHandle {
+function createShader(canvas: HTMLCanvasElement, options: ShaderOptions = {}): ShaderHandle {
   const gl = canvas.getContext("webgl2", { alpha: false, antialias: false, depth: false, stencil: false });
   if (!gl) throw new Error("WebGL2 is not available in this browser.");
   const dark = parseHex(options.background?.dark ?? "#090909");

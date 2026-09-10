@@ -1,4 +1,4 @@
-import { useState, type SVGProps } from "react";
+import { useState, type FormEvent, type SVGProps } from "react";
 import { Mail } from "lucide-react";
 import TextInput from "../components/Inputs/TextInput";
 import TextArea from "../components/Inputs/TextArea";
@@ -42,7 +42,7 @@ const Contact = () => {
   const [isSuccess, setIsSuccess] = useState(false);
   const [isError, setIsError] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
     const form = e.target as HTMLFormElement;

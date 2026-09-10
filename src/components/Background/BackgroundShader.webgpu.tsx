@@ -479,7 +479,7 @@ function animate(options: ShaderOptions, draw: (time: number, theme: number, pix
 
 const UNIFORM_FLOATS = 12;
 
-export async function createShader(canvas: HTMLCanvasElement, options: ShaderOptions = {}): Promise<ShaderHandle> {
+async function createShader(canvas: HTMLCanvasElement, options: ShaderOptions = {}): Promise<ShaderHandle> {
   const dark = parseHex(options.background?.dark ?? "#090909");
   const light = parseHex(options.background?.light ?? "#ffffff");
   options.signal?.throwIfAborted();
