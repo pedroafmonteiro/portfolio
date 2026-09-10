@@ -7,6 +7,7 @@ import Projects from "./pages/Projects";
 import Contact from "./pages/Contact";
 import "./index.css";
 import { BackgroundShader } from "./components/Background/BackgroundShader";
+import MainContent from "./components/Layout/MainContent";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -15,10 +16,12 @@ createRoot(document.getElementById("root")!).render(
         <BackgroundShader theme="dark" background={{ dark: "#101010" }} />
       </div>
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/experience" element={<Experience />} />
-        <Route path="/projects" element={<Projects />} />
-        <Route path="/contact" element={<Contact />} />
+        <Route element={<MainContent />}>
+          <Route path="/" element={<Home />} />
+          <Route path="/experience" element={<Experience />} />
+          <Route path="/projects" element={<Projects />} />
+          <Route path="/contact" element={<Contact />} />
+        </Route>
       </Routes>
     </BrowserRouter>
   </StrictMode>,

@@ -3,7 +3,6 @@ import { Github, Linkedin, Mail } from "lucide-react";
 import TextInput from "../components/Inputs/TextInput";
 import TextArea from "../components/Inputs/TextArea";
 import Button from "../components/Inputs/Button";
-import MainContent from "../components/Layout/MainContent";
 
 const Contact = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -77,8 +76,7 @@ const Contact = () => {
   ];
 
   return (
-    <MainContent>
-      <div className="space-y-8 w-full max-w-xl mx-auto py-2">
+    <div className="space-y-8 w-full max-w-xl mx-auto py-2">
         <header className="space-y-1">
           <h1 className="text-xl font-medium text-neutral-100">Contact</h1>
           <p className="text-sm text-neutral-400">
@@ -167,7 +165,6 @@ const Contact = () => {
           </div>
         </section>
       </div>
-    </MainContent>
   );
 };
 

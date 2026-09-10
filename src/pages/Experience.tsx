@@ -1,4 +1,3 @@
-import MainContent from "../components/Layout/MainContent";
 import ContentItem from "../components/ContentItem";
 
 const Experience = () => {
@@ -46,22 +45,20 @@ const Experience = () => {
   ];
 
   return (
-    <MainContent>
-      <div className="space-y-8 w-full max-w-xl mx-auto py-2">
-        <header className="space-y-1">
-          <h1 className="text-xl font-medium text-neutral-100">Experience</h1>
-          <p className="text-sm text-neutral-400">
-            A summary of my professional experience.
-          </p>
-        </header>
+    <div className="space-y-8 w-full max-w-xl mx-auto py-2">
+      <header className="space-y-1">
+        <h1 className="text-xl font-medium text-neutral-100">Experience</h1>
+        <p className="text-sm text-neutral-400">
+          A summary of my professional experience.
+        </p>
+      </header>
 
-        <div className="divide-y divide-white/5 space-y-6">
-          {experiences.map((exp, index) => (
-            <ContentItem key={index} {...exp} />
-          ))}
-        </div>
+      <div className="divide-y divide-white/5 space-y-6">
+        {experiences.map((exp, index) => (
+          <ContentItem key={index} {...exp} />
+        ))}
       </div>
-    </MainContent>
+    </div>
   );
 };
 

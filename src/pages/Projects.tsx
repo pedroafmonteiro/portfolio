@@ -1,4 +1,3 @@
-import MainContent from "../components/Layout/MainContent";
 import ContentItem from "../components/ContentItem";
 
 const Projects = () => {
@@ -69,22 +68,20 @@ const Projects = () => {
   ];
 
   return (
-    <MainContent>
-      <div className="space-y-8 w-full max-w-xl mx-auto py-2">
-        <header className="space-y-1">
-          <h1 className="text-xl font-medium text-neutral-100">Projects</h1>
-          <p className="text-sm text-neutral-400">
-            A collection of my personal and academic projects.
-          </p>
-        </header>
+    <div className="space-y-8 w-full max-w-xl mx-auto py-2">
+      <header className="space-y-1">
+        <h1 className="text-xl font-medium text-neutral-100">Projects</h1>
+        <p className="text-sm text-neutral-400">
+          A collection of my personal and academic projects.
+        </p>
+      </header>
 
-        <div className="divide-y divide-white/5 space-y-6">
-          {projects.map((project, index) => (
-            <ContentItem key={index} {...project} />
-          ))}
-        </div>
+      <div className="divide-y divide-white/5 space-y-6">
+        {projects.map((project, index) => (
+          <ContentItem key={index} {...project} />
+        ))}
       </div>
-    </MainContent>
+    </div>
   );
 };
 

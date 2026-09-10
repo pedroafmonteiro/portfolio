@@ -6,6 +6,7 @@ import {
     type HTMLAttributes,
     type ReactNode,
 } from "react";
+import { Outlet, useLocation } from "react-router";
 import NavItem from "./NavItem";
 
 export interface MainContentProps extends HTMLAttributes<HTMLElement> {
@@ -27,6 +28,7 @@ const MainContent = ({
     nav,
     ...props
 }: MainContentProps) => {
+    const location = useLocation();
     const mainRef = useRef<HTMLElement>(null);
     const [scrollProgress, setScrollProgress] = useState({ top: 0, bottom: 0 });
 
@@ -51,6 +53,17 @@ const MainContent = ({
     }, []);
 
     useEffect(() => {
+        if (mainRef.current) {
+            mainRef.current.scrollTop = 0;
+        }
+        updateScrollState();
+        const frameId = requestAnimationFrame(() => {
+            updateScrollState();
+        });
+        return () => cancelAnimationFrame(frameId);
+    }, [location.pathname, updateScrollState]);
+
+    useEffect(() => {
         updateScrollState();
 
         const el = mainRef.current;
@@ -67,7 +80,7 @@ const MainContent = ({
             observer.disconnect();
             window.removeEventListener("resize", updateScrollState);
         };
-    }, [updateScrollState, children]);
+    }, [updateScrollState, children, location.pathname]);
 
     return (
         <div className="flex justify-center w-full">
@@ -94,7 +107,12 @@ const MainContent = ({
                             .join(" ")}
                         {...props}
                     >
-                        {children}
+                        <div
+                            key={location.pathname}
+                            className="animate-page-enter flex-1 flex flex-col"
+                        >
+                            {children ?? <Outlet />}
+                        </div>
                     </main>
 
                     <div
