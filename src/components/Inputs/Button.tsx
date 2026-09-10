@@ -1,17 +1,7 @@
-import { CheckCircle2Icon, CircleXIcon, Loader2Icon } from "lucide-react";
+import type { ButtonHTMLAttributes } from "react";
+import { Check, Loader2 } from "lucide-react";
 
-const Button = ({
-  type = "button",
-  width = "w-full",
-  baseText,
-  loadingText,
-  successText,
-  errorText,
-  isLoading,
-  isSuccess,
-  isError,
-}: {
-  type?: "button" | "submit" | "reset";
+export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   width?: string;
   baseText?: string;
   loadingText?: string;
@@ -20,44 +10,62 @@ const Button = ({
   isLoading?: boolean;
   isSuccess?: boolean;
   isError?: boolean;
-}) => {
-  const baseClass =
-    "py-2 px-4 rounded-lg transition-all duration-200 select-none " + width;
-  let buttonClass = `bg-neutral-200 hover:bg-neutral-300 text-neutral-900 cursor-pointer ${baseClass}`;
+}
+
+const Button = ({
+  type = "button",
+  width = "w-full",
+  baseText = "Send message",
+  loadingText = "Sending...",
+  successText = "Message sent",
+  errorText = "Couldn't send — try again",
+  isLoading,
+  isSuccess,
+  isError,
+  className = "",
+  children,
+  disabled,
+  ...props
+}: ButtonProps) => {
+  const baseClass = `flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-sm font-medium transition-all duration-150 select-none ${width}`;
+
+  let stateClass =
+    "bg-white text-neutral-950 hover:bg-neutral-200 active:scale-[0.99] cursor-pointer shadow-sm";
 
   if (isSuccess) {
-    buttonClass = `bg-green-600 text-green-100 cursor-default ${baseClass}`;
+    stateClass =
+      "bg-white/10 text-neutral-200 border border-white/15 cursor-default";
   } else if (isError) {
-    buttonClass = `bg-red-600 text-red-100 cursor-default ${baseClass}`;
+    stateClass =
+      "bg-white/5 text-neutral-300 border border-red-500/30 hover:border-red-500/50 cursor-pointer";
   } else if (isLoading) {
-    buttonClass = `bg-yellow-600 text-yellow-100 cursor-not-allowed ${baseClass}`;
+    stateClass =
+      "bg-white/5 text-neutral-400 border border-white/10 cursor-wait";
   }
+
+  const isDisabled = disabled || isLoading || isSuccess;
 
   return (
     <button
       type={type}
-      className={buttonClass}
-      disabled={isLoading || isSuccess || isError}
+      className={`${baseClass} ${stateClass} ${className}`.trim()}
+      disabled={isDisabled}
+      {...props}
     >
       {isSuccess ? (
-        <span className="flex items-center justify-center gap-2">
-          <CheckCircle2Icon />
+        <>
+          <Check className="w-3.5 h-3.5 stroke-[2.5]" />
           <span>{successText}</span>
-        </span>
+        </>
       ) : isError ? (
-        <span className="flex items-center justify-center gap-2">
-          <CircleXIcon />
-          <span>{errorText}</span>
-        </span>
+        <span>{errorText}</span>
       ) : isLoading ? (
         <>
-        <div className="flex items-center justify-center gap-2">
-          <Loader2Icon className="animate-spin" />
+          <Loader2 className="w-3.5 h-3.5 animate-spin text-neutral-400" />
           <span>{loadingText}</span>
-        </div>
         </>
       ) : (
-        <span>{baseText}</span>
+        children || <span>{baseText}</span>
       )}
     </button>
   );
