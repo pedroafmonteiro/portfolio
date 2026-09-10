@@ -21,14 +21,14 @@ const Projects = () => {
       title: "Personal Portfolio",
       description:
         "A personal portfolio website built with React and Tailwind CSS, showcasing my projects, experience, and skills in a clean and responsive design.",
-      websiteLink: "https://pedroafmonteiro.pages.dev",
-      websiteLabel: "pedroafmonteiro.pages.dev",
+      websiteLink: "https://pedroafmonteiro.com",
+      websiteLabel: "pedroafmonteiro.com",
     },
     {
       title: "In Porto",
       description:
         "A cross-platform mobile application that provides users with information about public transportation in Porto, Portugal, enhancing the experience of both residents and tourists.",
-      websiteLink: "https://github.com/niaefeup/in-porto",
+      websiteLink: "https://github.com/pedroafmonteiro/in-porto",
       websiteLabel: "github.com",
     },
     {
